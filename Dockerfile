@@ -1,10 +1,9 @@
-FROM node:alpine AS my-app-build
+#stage 1
+FROM node:latest as node
 WORKDIR /app
 COPY . .
-RUN npm ci && npm run build
-
-# stage 2
-
+RUN npm install
+RUN npm run build --prod
+#stage 2
 FROM nginx:alpine
-COPY --from=my-app-build /app/dist/app-to-run-inside-docker /usr/share/nginx/html
-EXPOSE 80
+COPY --from=node /app/dist/crud-tuto-front /usr/share/nginx/html
